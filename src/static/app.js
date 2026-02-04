@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
@@ -87,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh activities list to show new participant
+        await fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -109,3 +111,52 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize app
   fetchActivities();
 });
+  // Add participant functionality
+  const participantsList = document.getElementById('participants-list');
+  function addParticipant(name) {
+    const li = document.createElement('li');
+    li.style.listStyleType = 'none'; // Hide bullet point
+    li.style.display = 'flex';
+    li.style.alignItems = 'center';
+
+    const span = document.createElement('span');
+    span.textContent = name;
+    span.style.flexGrow = '1';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = '🗑️';
+    deleteBtn.title = 'Unregister participant';
+    deleteBtn.style.marginLeft = '8px';
+    deleteBtn.style.background = 'none';
+    deleteBtn.style.border = 'none';
+    deleteBtn.style.cursor = 'pointer';
+    deleteBtn.style.fontSize = '1.1em';
+    deleteBtn.addEventListener('click', function() {
+      participantsList.removeChild(li);
+    });
+
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    participantsList.appendChild(li);
+  }
+
+  // Hide bullet points for all existing list items (if any)
+  Array.from(participantsList.children).forEach(function(li) {
+    li.style.listStyleType = 'none';
+    li.style.display = 'flex';
+    li.style.alignItems = 'center';
+    if (!li.querySelector('button')) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.innerHTML = '🗑️';
+      deleteBtn.title = 'Unregister participant';
+      deleteBtn.style.marginLeft = '8px';
+      deleteBtn.style.background = 'none';
+      deleteBtn.style.border = 'none';
+      deleteBtn.style.cursor = 'pointer';
+      deleteBtn.style.fontSize = '1.1em';
+      deleteBtn.addEventListener('click', function() {
+        participantsList.removeChild(li);
+      });
+      li.appendChild(deleteBtn);
+    }
+  });
